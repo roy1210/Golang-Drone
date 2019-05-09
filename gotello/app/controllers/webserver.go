@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"strconv"
 	"log"
 	"encoding/json"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"regexp"
 
 	"github.com/roy1210/Study/Go-drone/gotello/config"
+	"github.com/roy1210/Study/Go-drone/gotello/app/models"
 )
 
 // 引数のテンプレートを描画する
@@ -33,6 +35,26 @@ func viewControllerHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+var appContext struct {
+	DroneManager *models.DroneManager
+}
+
+func init() {
+	appContext.DroneManager = models.NewDroneManager()
+}
+
+func getSpeed(r *http.Request) int{
+	strSpeed := r.FormValue("speed")
+	if strSpeed == "" {
+		return models.DefaultSpeed
+	}
+	speed, err := strconv.Atoi(strSpeed)
+	if err !=nil{
+		return models.DefaultSpeed
+	}
+	return speed
 }
 
 type APIResult struct {
@@ -71,11 +93,60 @@ func apiMakeHandler(fn func(w http.ResponseWriter, r *http.Request)) http.Handle
 	}
 }
 
-
+// frontからcommandの値を受け取る。
+// switch文を使いdroneにcommandの値を渡す
 func apiCommandHandler(w http.ResponseWriter, r *http.Request){
-	// frontからcommandの値を受け取る
+
 	command := r.FormValue("command")
 	log.Printf("action=apiCommandHandler command=%s", command)
+
+	drone := appContext.DroneManager
+	switch command {
+	case "caseRotation":
+		drone.CeaseRotation()
+	case "takeOff":
+		drone.TakeOff()
+	case "land":
+		drone.Land()
+	case "hover":
+		drone.Hover()
+	case "up":
+		drone.Up(drone.Speed)
+	case "clockwise":
+		drone.Clockwise(drone.Speed)
+	case "counterClockwise":
+		drone.CounterClockwise(drone.Speed)
+	case "down":
+		drone.Down(drone.Speed)
+	case "forward":
+		drone.Forward(drone.Speed)
+	case "left":
+		drone.Left(drone.Speed)
+	case "right":
+		drone.Right(drone.Speed)
+	case "backward":
+		drone.Backward(drone.Speed)
+	case "frontFlip":
+		drone.FrontFlip()
+	case "leftFlip":
+		drone.LeftFlip()
+	case "rightFlip":
+		drone.RightFlip()
+	case "backFlip":
+		drone.BackFlip()
+	// 5秒以内に投げる
+	case "throwTakeOff":
+		drone.ThrowTakeOff()
+	// ドローンが上下左右に動く動く
+	case "bounce":
+		drone.Bounce()
+	case "speed":
+		drone.Speed = getSpeed(r)
+	default:
+		APIResponse(w, "Not found", http.StatusNotFound)
+		return
+	}
+
 	APIResponse(w, "OK", http.StatusOK)
 }
 // 実際に返ってきたlog： 2019/05/09 17:03:26 webserver.go:78: action=apiCommandHandler command=ceaseRoatation

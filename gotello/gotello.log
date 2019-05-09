@@ -44,3 +44,20 @@
 2019/05/09 17:05:07 webserver.go:78: action=apiCommandHandler command=land
 2019/05/09 17:05:08 webserver.go:78: action=apiCommandHandler command=hover
 2019/05/09 17:10:39 webserver.go:78: action=apiCommandHandler command=ceaseRoatation
+2019/05/09 18:03:18 webserver.go:90: action=apiCommandHandler command=takeOff
+2019/05/09 18:03:26 webserver.go:90: action=apiCommandHandler command=land
+2019/05/09 18:23:48 robot.go:192: Stopping Robot tello ...
+2019/05/09 18:24:03 webserver.go:90: action=apiCommandHandler command=takeOff
+2019/05/09 18:24:06 webserver.go:90: action=apiCommandHandler command=hover
+2019/05/09 18:24:10 webserver.go:90: action=apiCommandHandler command=hover
+2019/05/09 18:24:12 webserver.go:90: action=apiCommandHandler command=left
+2019/05/09 18:24:13 webserver.go:90: action=apiCommandHandler command=left
+2019/05/09 18:24:15 webserver.go:90: action=apiCommandHandler command=left
+2019/05/09 18:24:19 webserver.go:90: action=apiCommandHandler command=hover
+2019/05/09 18:24:23 webserver.go:90: action=apiCommandHandler command=right
+2019/05/09 18:24:25 webserver.go:90: action=apiCommandHandler command=hover
+2019/05/09 18:24:33 webserver.go:90: action=apiCommandHandler command=clockwise
+2019/05/09 18:24:34 webserver.go:90: action=apiCommandHandler command=clockwise
+2019/05/09 18:24:42 webserver.go:90: action=apiCommandHandler command=hover
+2019/05/09 18:24:47 webserver.go:90: action=apiCommandHandler command=land
+2019/05/09 18:29:19 robot.go:192: Stopping Robot tello ...
