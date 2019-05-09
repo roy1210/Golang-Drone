@@ -8,38 +8,18 @@
 </style>
 
 <script>
-  // paramsはMapのイメージ  command: "ceaseRoatation"
-  function sendCommand(command, params = {}) {
-    params['command'] = command
-    // postした結果、成功した時(400)と失敗した時(200)の返りjsonで受け取る。
-    $.post("/api/command/", params).done(function (json) {
-      console.log({
-        action: 'sendCommand',
-        params: params,
-        json: json,
-        status: 'Success'
-      })
-    }, 'json').fail(function (json) {
-      console.log({
-        action: 'sendCommand',
-        params: params,
-        json: json,
-        status: 'fail'
-      })
-    }, 'json')
-
-    // jQueryの設定読み込み。 
-    // pageinit: jQuery mobileのページが読み込まれた時にfunctionは呼ばれる
-    // Speed sliderの動作。　slidestop: スライドが止まったときにEventを登録
-    $(document).on('pageinit', function () {
-      $('#slider-speed').on("slidestop", function (event) {
-        let params = {
-          speed: $('#slider-speed').val(),
-        }
-        sendCommand('speed', params)
-      })
-    })
-  }
+// paramsはMapのイメージ command: "ceaseRoatation" function sendCommand(command,
+params = {}) { params['command'] = command //
+postした結果、成功した時(400)と失敗した時(200)の返りjsonで受け取る。
+$.post("/api/command/", params).done(function (json) { console.log({ action:
+'sendCommand', params: params, json: json, status: 'Success' }) },
+'json').fail(function (json) { console.log({ action: 'sendCommand', params:
+params, json: json, status: 'fail' }) }, 'json') // jQueryの設定読み込み。 //
+pageinit: jQuery mobileのページが読み込まれた時にfunctionは呼ばれる // Speed
+sliderの動作。 slidestop: スライドが止まったときにEventを登録
+$(document).on('pageinit', function () { $('#slider-speed').on("slidestop",
+function (event) { let params = { speed: $('#slider-speed').val(), }
+sendCommand('speed', params) }) }) }
 </script>
 
 
@@ -133,5 +113,7 @@
     <a href="#" data-role="button" data-inline="true" onclick="sendCommand('patrol'); return false;">Patrol</a>
     <a href="#" data-role="button" data-inline="true" onclick="sendCommand('stopPatrol'); return false;">Stop Patrol</a>
   </div>
+  <br>
+  <img src="/video/streaming/">
 </div>
 {{ end }}

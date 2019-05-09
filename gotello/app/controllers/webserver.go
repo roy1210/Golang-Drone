@@ -1,16 +1,16 @@
 package controllers
 
 import (
-	"strconv"
-	"log"
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"regexp"
+	"strconv"
 
-	"github.com/roy1210/Study/Go-drone/gotello/config"
 	"github.com/roy1210/Study/Go-drone/gotello/app/models"
+	"github.com/roy1210/Study/Go-drone/gotello/config"
 )
 
 // 引数のテンプレートを描画する
@@ -45,13 +45,13 @@ func init() {
 	appContext.DroneManager = models.NewDroneManager()
 }
 
-func getSpeed(r *http.Request) int{
+func getSpeed(r *http.Request) int {
 	strSpeed := r.FormValue("speed")
 	if strSpeed == "" {
 		return models.DefaultSpeed
 	}
 	speed, err := strconv.Atoi(strSpeed)
-	if err !=nil{
+	if err != nil {
 		return models.DefaultSpeed
 	}
 	return speed
@@ -95,7 +95,7 @@ func apiMakeHandler(fn func(w http.ResponseWriter, r *http.Request)) http.Handle
 
 // frontからcommandの値を受け取る。
 // switch文を使いdroneにcommandの値を渡す
-func apiCommandHandler(w http.ResponseWriter, r *http.Request){
+func apiCommandHandler(w http.ResponseWriter, r *http.Request) {
 
 	command := r.FormValue("command")
 	log.Printf("action=apiCommandHandler command=%s", command)
@@ -134,6 +134,10 @@ func apiCommandHandler(w http.ResponseWriter, r *http.Request){
 		drone.RightFlip()
 	case "backFlip":
 		drone.BackFlip()
+	case "patrol":
+		drone.Patrol()
+	case "stopPatrol":
+		drone.StopPatrol()
 	// 5秒以内に投げる
 	case "throwTakeOff":
 		drone.ThrowTakeOff()
@@ -149,13 +153,14 @@ func apiCommandHandler(w http.ResponseWriter, r *http.Request){
 
 	APIResponse(w, "OK", http.StatusOK)
 }
-// 実際に返ってきたlog： 2019/05/09 17:03:26 webserver.go:78: action=apiCommandHandler command=ceaseRoatation
 
+// 実際に返ってきたlog： 2019/05/09 17:03:26 webserver.go:78: action=apiCommandHandler command=ceaseRoatation
 
 func StartWebServer() error {
 	http.HandleFunc("/", viewIndexHandler)
 	http.HandleFunc("/controller/", viewControllerHandler)
 	http.HandleFunc("/api/command/", apiMakeHandler(apiCommandHandler))
+	http.Handle("/video/streaming/", appContext.DroneManager.Stream)
 
 	// staticのサーバー立ち上げ。
 	// Handlerではなく、既にフォルダとして静的なサイトの準備ができたものに対し、フォルダを読み込んでサーバーからアクセス出来るようにする。CSSやImgの格納場所
