@@ -13,7 +13,7 @@ func main() {
 	work := func() {
 		drone.TakeOff()
 
-		// afterはTakeOff後の累積のDurationで考える。
+		// gobot.afterはTakeOff後の累積のDurationで考える。
 
 		gobot.After(10*time.Second, func() {
 			drone.Down(20)
