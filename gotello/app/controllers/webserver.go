@@ -102,7 +102,7 @@ func apiCommandHandler(w http.ResponseWriter, r *http.Request) {
 
 	drone := appContext.DroneManager
 	switch command {
-	case "caseRotation":
+	case "ceseRotation":
 		drone.CeaseRotation()
 	case "takeOff":
 		drone.TakeOff()
@@ -135,15 +135,17 @@ func apiCommandHandler(w http.ResponseWriter, r *http.Request) {
 	case "backFlip":
 		drone.BackFlip()
 	case "patrol":
-		drone.Patrol()
+		drone.StartPatrol()
 	case "stopPatrol":
 		drone.StopPatrol()
-	// 5秒以内に投げる
 	case "throwTakeOff":
 		drone.ThrowTakeOff()
-	// ドローンが上下左右に動く動く
 	case "bounce":
 		drone.Bounce()
+	case "faceDetectTrack":
+		drone.EnableFaceDetectTracking()
+	case "stopFaceDetectTrack":
+		drone.DisableFaceDetectTracking()
 	case "speed":
 		drone.Speed = getSpeed(r)
 	default:
@@ -160,7 +162,7 @@ func StartWebServer() error {
 	http.HandleFunc("/", viewIndexHandler)
 	http.HandleFunc("/controller/", viewControllerHandler)
 	http.HandleFunc("/api/command/", apiMakeHandler(apiCommandHandler))
-	http.Handle("/video/streaming/", appContext.DroneManager.Stream)
+	http.Handle("/video/streaming", appContext.DroneManager.Stream)
 
 	// staticのサーバー立ち上げ。
 	// Handlerではなく、既にフォルダとして静的なサイトの準備ができたものに対し、フォルダを読み込んでサーバーからアクセス出来るようにする。CSSやImgの格納場所
