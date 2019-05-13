@@ -148,6 +148,8 @@ func apiCommandHandler(w http.ResponseWriter, r *http.Request) {
 		drone.DisableFaceDetectTracking()
 	case "speed":
 		drone.Speed = getSpeed(r)
+	case "snapshot":
+		drone.TakeSnapShot()
 	default:
 		APIResponse(w, "Not found", http.StatusNotFound)
 		return

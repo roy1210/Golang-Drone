@@ -1,9 +1,11 @@
 package models
 
 import (
+	"context"
 	"image"
 	"image/color"
 	"io"
+	"io/ioutil"
 	"log"
 	"math"
 	"os/exec"
@@ -30,6 +32,7 @@ const (
 	// ffmpeg は3次元の配列を持つ
 	frameSize         = frameArea * 3
 	faceDetectXMLFile = "./app/models/haarcascade_frontalface_default.xml"
+	snapshotsFolder   = "./static/img/snapshots/"
 )
 
 // 3rd partyのファイルを書き換えることはせず、必要な物は自分で足す。
@@ -46,6 +49,7 @@ type DroneManager struct {
 	ffmpegOut            io.ReadCloser
 	Stream               *mjpeg.Stream
 	faceDetectTrackingOn bool
+	isSnapShot           bool
 }
 
 // Droneの基本動作設定
@@ -71,6 +75,7 @@ func NewDroneManager() *DroneManager {
 		ffmpegOut:            ffmpegOut,
 		Stream:               mjpeg.NewStream(),
 		faceDetectTrackingOn: false,
+		isSnapShot:           false,
 	}
 
 	// Gobotのworkパターン
@@ -266,9 +271,33 @@ func (d *DroneManager) StreamVideo() {
 			}
 
 			jpegBuf, _ := gocv.IMEncode(".jpg", img)
+
+			if d.isSnapShot {
+				backupFileName := snapshotsFolder + time.Now().Format(time.RFC3339) + ".jpg"
+				ioutil.WriteFile(backupFileName, jpegBuf, 0644)
+
+				// snapshot.jpgは上書きされるから、↑で保存する。
+				snapshotFileName := snapshotsFolder + "snapshot.jpg"
+				ioutil.WriteFile(snapshotFileName, jpegBuf, 0644)
+				d.isSnapShot = false
+			}
+
 			d.Stream.UpdateJPEG(jpegBuf)
 		}
 	}(d)
+}
+
+// contextを使用し、キャンセル条件を書く
+func (d *DroneManager) TakeSnapShot() {
+	d.isSnapShot = true
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	for{
+		if !d.isSnapShot || ctx.Err() !=nil{
+			break
+		}
+	}
+	d.isSnapShot = false
 }
 
 func (d *DroneManager) EnableFaceDetectTracking() {
